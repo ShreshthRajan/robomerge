@@ -48,6 +48,4 @@ gsutil -m cp -r "gs://gresearch/robotics/droid_100/*" data/droid/1.0.0/
 - Matplotlib 3.10.0
 - h5py 3.12.1
 
-Note: For Mac M1/M2 users, the setup includes tensorflow-metal and tensorflow-macos packages automatically.
 
-[Rest of README remains the same...]
