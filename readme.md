@@ -52,7 +52,9 @@ The demo.ipynb notebook provides an end-to-end demonstration of RoboMerge's capa
 To run the demo:
 1. Ensure you've completed the installation steps above
 2. Launch Jupyter:
+```bash
         bashCopyjupyter notebook
+```
 3. Open demo.ipynb
 4. Run all cells
 
@@ -60,6 +62,7 @@ To run the demo:
 RoboMerge uses a configuration-based system for adding support for new robots. 
 
 Example configuration:
+```bash
 pythonCopyrobot_config = {
     "name": "new_robot",
     "input_format": {
@@ -74,6 +77,7 @@ pythonCopyrobot_config = {
     },
     "control_frequency": 100
 }
+```
 
 ## Environment Requirements
 - Python 3.10.16 or later
