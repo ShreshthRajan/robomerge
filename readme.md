@@ -40,8 +40,40 @@ pip install gsutil
 gsutil -m cp -r "gs://gresearch/robotics/droid_100/*" data/droid/1.0.0/
 ```
 
-## Environment Requirements
+## Demo Notebook
+The demo.ipynb notebook provides an end-to-end demonstration of RoboMerge's capabilities:
 
+1. Data ingestion from DROID format
+2. Standardization and frequency normalization
+3. Quality validation with metrics
+4. FAST preprocessing
+5. Extensibility demonstration
+
+To run the demo:
+1. Ensure you've completed the installation steps above
+2. Launch Jupyter:
+        bashCopyjupyter notebook
+3. Open demo.ipynb
+4. Run all cells
+
+## Extending to New Robots
+RoboMerge uses a configuration-based system for adding support for new robots. Example configuration:
+pythonCopyrobot_config = {
+    "name": "new_robot",
+    "input_format": {
+        "type": "csv",
+        "delimiter": ",",
+        "columns": ["timestamp", "joint1", "joint2", "joint3"]
+    },
+    "action_space": {
+        "dimensions": 3,
+        "type": "joint_velocity",
+        "limits": [-1.0, 1.0]
+    },
+    "control_frequency": 100
+}
+
+## Environment Requirements
 - Python 3.10.16 or later
 - TensorFlow 2.16.2
 - NumPy 1.26.4
