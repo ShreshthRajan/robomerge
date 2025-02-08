@@ -86,5 +86,3 @@ pythonCopyrobot_config = {
 - Matplotlib 3.10.0
 - h5py 3.12.1
 - gsutil (for data download)
-
-
