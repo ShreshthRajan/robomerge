@@ -47,5 +47,6 @@ gsutil -m cp -r "gs://gresearch/robotics/droid_100/*" data/droid/1.0.0/
 - NumPy 1.26.4
 - Matplotlib 3.10.0
 - h5py 3.12.1
+- gsutil (for data download)
 
 
