@@ -1,5 +1,4 @@
-# Create .gitignore
-echo "# Data and outputs
+# Data and outputs
 data/droid/1.0.0/*
 !data/droid/1.0.0/.gitkeep
 output/*
@@ -13,4 +12,4 @@ __pycache__/
 *.egg-info/
 
 # Jupyter
-.ipynb_checkpoints" > .gitignore
+.ipynb_checkpoints
