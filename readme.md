@@ -36,11 +36,8 @@ pip install -e .
 # Install gsutil if needed
 pip install gsutil
 
-# Create data directory
-mkdir -p data/droid/1.0.0
-
 # Download DROID dataset
-gsutil -m cp -r "gs://gresearch/robotics/droid_100/*" ./data/droid/1.0.0/
+gsutil -m cp -r "gs://gresearch/robotics/droid_100/*" data/droid/1.0.0/
 ```
 
 ## Environment Requirements
