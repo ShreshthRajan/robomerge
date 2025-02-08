@@ -1,0 +1,16 @@
+# Create .gitignore
+echo "# Data and outputs
+data/droid/1.0.0/*
+!data/droid/1.0.0/.gitkeep
+output/*
+!output/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints" > .gitignore
