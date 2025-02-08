@@ -57,7 +57,9 @@ To run the demo:
 4. Run all cells
 
 ## Extending to New Robots
-RoboMerge uses a configuration-based system for adding support for new robots. Example configuration:
+RoboMerge uses a configuration-based system for adding support for new robots. 
+
+Example configuration:
 pythonCopyrobot_config = {
     "name": "new_robot",
     "input_format": {
