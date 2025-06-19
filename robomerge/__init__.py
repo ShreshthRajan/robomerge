@@ -12,7 +12,7 @@ Features:
 - Operations Dashboard for enterprise-scale monitoring
 - Multi-robot data standardization and quality validation
 
-Compatible with Physical Intelligence's latest VLA architectures.
+Compatible with PI latest VLA architectures.
 """
 
 __version__ = "0.3.0"

@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+# robomerge/demo_live_dashboard.py
+
 """
 RoboMerge Live Dashboard Demo
 ============================
@@ -733,7 +734,6 @@ def create_dashboard_html(data):
         .impact-medium {{ border-left: 3px solid #f59e0b; }}
         .impact-low {{ border-left: 3px solid #64748b; }}
 
-        
     </style>
 </head>
 <body>
@@ -973,11 +973,143 @@ def create_dashboard_html(data):
     <div class="last-updated">Last updated: {data['timestamp'][:19].replace('T', ' ')}</div>
 
     <script>
+        // Dashboard data
+        const dashboardData = {json.dumps(data, indent=8, default=str)};
+        let currentOperator = null;
+
+        // Navigation
         function showPage(pageId) {{
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
-            event.target.classList.add('active');
+            
+            // Find and activate the corresponding nav item
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {{
+                if (item.textContent.includes(pageId.charAt(0).toUpperCase() + pageId.slice(1)) ||
+                    (pageId === 'overview' && item.textContent.includes('Overview')) ||
+                    (pageId === 'operators' && item.textContent.includes('Operators')) ||
+                    (pageId === 'research' && item.textContent.includes('Research')) ||
+                    (pageId === 'queue' && item.textContent.includes('Queue')) ||
+                    (pageId === 'alerts' && item.textContent.includes('Alerts'))) {{
+                    item.classList.add('active');
+                }}
+            }});
+        }}
+
+        // Show operator detail
+        function showOperatorDetail(operatorId) {{
+            currentOperator = operatorId;
+            const operatorData = dashboardData.operator_details[operatorId];
+            const operatorInfo = dashboardData.operators.find(op => op.operator_id === operatorId);
+            
+            document.getElementById('operator-detail-title').textContent = 
+                `${{operatorInfo.name}} (${{operatorId}}) - Rank #${{operatorInfo.rank}}`;
+            
+            // Update skills section
+            const skillsContainer = document.getElementById('operator-skills');
+            const skills = ['precision', 'speed', 'consistency', 'adaptability'];
+            skillsContainer.innerHTML = skills.map(skill => {{
+                const currentScore = operatorData.skill_trends[skill][6]; // Latest score
+                return `
+                    <div class="skill-item">
+                        <span style="text-transform: capitalize;">${{skill}}</span>
+                        <div class="skill-bar">
+                            <div class="skill-progress" style="width: ${{currentScore * 100}}%"></div>
+                        </div>
+                        <span style="font-size: 0.875rem; color: #94a3b8;">${{(currentScore * 100).toFixed(0)}}%</span>
+                    </div>
+                `;
+            }}).join('');
+            
+            // Update tasks section
+            const tasksContainer = document.getElementById('operator-tasks');
+            tasksContainer.innerHTML = Object.entries(operatorData.task_performance).map(([task, perf]) => `
+                <div class="task-card">
+                    <div class="task-name">${{task.replace('_', ' ')}}</div>
+                    <div class="task-stat">
+                        <span>Success Rate:</span>
+                        <span>${{perf.success_rate.toFixed(1)}}%</span>
+                    </div>
+                    <div class="task-stat">
+                        <span>Avg Quality:</span>
+                        <span>${{perf.avg_quality.toFixed(2)}}</span>
+                    </div>
+                    <div class="task-stat">
+                        <span>Avg Time:</span>
+                        <span>${{Math.round(perf.avg_completion_time)}}s</span>
+                    </div>
+                    <div class="task-stat">
+                        <span>Total:</span>
+                        <span>${{perf.total_attempts}}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            showPage('operator-detail');
+            
+            // Create operator trend chart
+            setTimeout(() => {{
+                createOperatorTrendChart(operatorData);
+            }}, 100);
+        }}
+
+        function createOperatorTrendChart(operatorData) {{
+            const ctx = document.getElementById('operatorTrendChart').getContext('2d');
+            const days = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'];
+            
+            new Chart(ctx, {{
+                type: 'line',
+                data: {{
+                    labels: days,
+                    datasets: [{{
+                        label: 'Quality Score',
+                        data: operatorData.daily_quality,
+                        borderColor: '#06b6d4',
+                        backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                        tension: 0.4
+                    }}, {{
+                        label: 'Success Rate (%)',
+                        data: operatorData.daily_success_rate,
+                        borderColor: '#22c55e',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    }}]
+                }},
+                options: {{
+                    responsive: true,
+                    plugins: {{
+                        legend: {{ labels: {{ color: '#e2e8f0' }} }}
+                    }},
+                    scales: {{
+                        y: {{
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            min: 0.5,
+                            max: 1.0,
+                            grid: {{ color: 'rgba(51, 65, 85, 0.3)' }},
+                            ticks: {{ color: '#94a3b8' }},
+                            title: {{ display: true, text: 'Quality Score', color: '#94a3b8' }}
+                        }},
+                        y1: {{
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            min: 70,
+                            max: 100,
+                            grid: {{ drawOnChartArea: false, color: 'rgba(51, 65, 85, 0.3)' }},
+                            ticks: {{ color: '#94a3b8' }},
+                            title: {{ display: true, text: 'Success Rate (%)', color: '#94a3b8' }}
+                        }},
+                        x: {{
+                            grid: {{ color: 'rgba(51, 65, 85, 0.3)' }},
+                            ticks: {{ color: '#94a3b8' }}
+                        }}
+                    }}
+                }}
+            }});
         }}
 
         function refreshData() {{
@@ -990,29 +1122,121 @@ def create_dashboard_html(data):
                 .catch(error => console.error('Refresh failed:', error));
         }}
 
-        // Quality Chart
-        const ctx = document.getElementById('qualityChart').getContext('2d');
-        new Chart(ctx, {{
-            type: 'line',
-            data: {{
-                labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
-                datasets: [{{
-                    label: 'Quality Score',
-                    data: [0.82, 0.85, 0.89, 0.86, 0.87, 0.84],
-                    borderColor: '#06b6d4',
-                    backgroundColor: 'rgba(6, 182, 212, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }}]
-            }},
-            options: {{
-                responsive: true,
-                plugins: {{ legend: {{ labels: {{ color: '#e2e8f0' }} }} }},
-                scales: {{
-                    y: {{ beginAtZero: false, min: 0.7, max: 1.0, grid: {{ color: 'rgba(51, 65, 85, 0.3)' }}, ticks: {{ color: '#94a3b8' }} }},
-                    x: {{ grid: {{ color: 'rgba(51, 65, 85, 0.3)' }}, ticks: {{ color: '#94a3b8' }} }}
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {{
+            // Quality Overview Chart
+            const ctx = document.getElementById('qualityChart').getContext('2d');
+            new Chart(ctx, {{
+                type: 'line',
+                data: {{
+                    labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                    datasets: [{{
+                        label: 'Quality Score',
+                        data: [0.82, 0.85, 0.89, 0.86, 0.87, 0.84],
+                        borderColor: '#06b6d4',
+                        backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }}]
+                }},
+                options: {{
+                    responsive: true,
+                    plugins: {{ legend: {{ labels: {{ color: '#e2e8f0' }} }} }},
+                    scales: {{
+                        y: {{ beginAtZero: false, min: 0.7, max: 1.0, grid: {{ color: 'rgba(51, 65, 85, 0.3)' }}, ticks: {{ color: '#94a3b8' }} }},
+                        x: {{ grid: {{ color: 'rgba(51, 65, 85, 0.3)' }}, ticks: {{ color: '#94a3b8' }} }}
+                    }}
                 }}
-            }}
+            }});
+
+            // Correlation Chart for Research
+            const corrCtx = document.getElementById('correlationChart').getContext('2d');
+            new Chart(corrCtx, {{
+                type: 'bar',
+                data: {{
+                    labels: ['Data Quality', 'Temporal Consistency', 'Action Smoothness', 'Language Clarity'],
+                    datasets: [{{
+                        label: 'Model Performance Impact',
+                        data: [
+                            {data['research_analytics']['model_insights']['data_quality_correlation'] * 100},
+                            {data['research_analytics']['model_insights']['temporal_consistency_impact'] * 100},
+                            {data['research_analytics']['model_insights']['action_smoothness_importance'] * 100},
+                            {data['research_analytics']['model_insights']['language_instruction_clarity'] * 100}
+                        ],
+                        backgroundColor: [
+                            'rgba(6, 182, 212, 0.8)',
+                            'rgba(34, 197, 94, 0.8)',
+                            'rgba(251, 191, 36, 0.8)',
+                            'rgba(168, 85, 247, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(6, 182, 212, 1)',
+                            'rgba(34, 197, 94, 1)',
+                            'rgba(251, 191, 36, 1)',
+                            'rgba(168, 85, 247, 1)'
+                        ],
+                        borderWidth: 1
+                    }}]
+                }},
+                options: {{
+                    responsive: true,
+                    plugins: {{
+                        legend: {{ display: false }},
+                        title: {{ display: true, text: 'Operator Quality → Model Performance Correlation', color: '#e2e8f0' }}
+                    }},
+                    scales: {{
+                        y: {{ 
+                            beginAtZero: true, 
+                            max: 100,
+                            grid: {{ color: 'rgba(51, 65, 85, 0.3)' }}, 
+                            ticks: {{ color: '#94a3b8', callback: function(value) {{ return value + '%'; }} }},
+                            title: {{ display: true, text: 'Impact Score (%)', color: '#94a3b8' }}
+                        }},
+                        x: {{ 
+                            grid: {{ color: 'rgba(51, 65, 85, 0.3)' }}, 
+                            ticks: {{ color: '#94a3b8' }}
+                        }}
+                    }}
+                }}
+            }});
+
+            // Quality Impact Chart
+            const impactCtx = document.getElementById('qualityImpactChart').getContext('2d');
+            new Chart(impactCtx, {{
+                type: 'scatter',
+                data: {{
+                    datasets: [{{
+                        label: 'Operators',
+                        data: dashboardData.operators.map(op => ({{
+                            x: op.avg_quality * 100,
+                            y: op.performance_score
+                        }})),
+                        backgroundColor: 'rgba(6, 182, 212, 0.6)',
+                        borderColor: 'rgba(6, 182, 212, 1)',
+                        borderWidth: 2,
+                        pointRadius: 6
+                    }}]
+                }},
+                options: {{
+                    responsive: true,
+                    plugins: {{
+                        legend: {{ display: false }},
+                        title: {{ display: true, text: 'Quality Score vs Performance Score', color: '#e2e8f0' }}
+                    }},
+                    scales: {{
+                        x: {{
+                            title: {{ display: true, text: 'Quality Score (%)', color: '#94a3b8' }},
+                            grid: {{ color: 'rgba(51, 65, 85, 0.3)' }},
+                            ticks: {{ color: '#94a3b8' }}
+                        }},
+                        y: {{
+                            title: {{ display: true, text: 'Performance Score', color: '#94a3b8' }},
+                            grid: {{ color: 'rgba(51, 65, 85, 0.3)' }},
+                            ticks: {{ color: '#94a3b8' }}
+                        }}
+                    }}
+                }}
+            }});
         }});
 
         // Auto-refresh every 30 seconds
@@ -1021,7 +1245,8 @@ def create_dashboard_html(data):
                 'Last updated: ' + new Date().toLocaleString();
         }}, 30000);
 
-        console.log('🚀 RoboMerge Live Dashboard Loaded!');
+        console.log('🚀 Enhanced RoboMerge Dashboard Loaded!');
+        console.log('🎯 New Features: Operator Details, Research Analytics, Interactive Charts');
     </script>
 </body>
 </html>"""
