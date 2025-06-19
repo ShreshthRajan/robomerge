@@ -1,3 +1,4 @@
+# robomerge/setup.py
 from setuptools import setup, find_packages
 import platform
 
@@ -25,7 +26,7 @@ setup(
     version="0.3.0",
     packages=find_packages(),
     install_requires=requirements,
-    python_requires=">=3.10.16",
+    python_requires=">=3.10.12",
     author="Shreshth Rajan",
     description="A preprocessing pipeline for standardizing robot data for FAST and Knowledge Insulation (KI) training",
     long_description="""

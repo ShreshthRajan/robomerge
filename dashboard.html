@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoboMerge Operations Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f1419;
+            color: #e6e8eb;
+            line-height: 1.6;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background: #1a1f2e;
+            padding: 2rem 1rem;
+            border-right: 1px solid #2d3748;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00d4ff;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .nav-item {
+            padding: 0.75rem 1rem;
+            margin: 0.5rem 0;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-item:hover {
+            background: #2d3748;
+        }
+
+        .nav-item.active {
+            background: #00d4ff;
+            color: #0f1419;
+        }
+
+        .main-content {
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #2d3748;
+        }
+
+        .header h1 {
+            color: #00d4ff;
+            font-size: 2rem;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #10b981;
+            margin-left: auto;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: #1a1f2e;
+            border: 1px solid #2d3748;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: #00d4ff;
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #00d4ff;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #10b981;
+        }
+
+        .metric-label {
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        .leaderboard {
+            background: #1a1f2e;
+            border: 1px solid #2d3748;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .leaderboard-header {
+            background: #2d3748;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            color: #00d4ff;
+        }
+
+        .leaderboard-item {
+            display: grid;
+            grid-template-columns: 50px 1fr 100px 100px 120px;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #2d3748;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .leaderboard-item:hover {
+            background: #2d3748;
+        }
+
+        .rank {
+            font-weight: bold;
+            color: #00d4ff;
+        }
+
+        .operator-name {
+            font-weight: 500;
+        }
+
+        .score {
+            font-weight: bold;
+            color: #10b981;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #10b981;
+            color: #0f1419;
+        }
+
+        .status-idle {
+            background: #fbbf24;
+            color: #0f1419;
+        }
+
+        .status-offline {
+            background: #ef4444;
+            color: white;
+        }
+
+        .queue-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .queue-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #2d3748;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .queue-item.priority-high {
+            border-left: 4px solid #ef4444;
+        }
+
+        .queue-item.priority-medium {
+            border-left: 4px solid #fbbf24;
+        }
+
+        .queue-item.priority-low {
+            border-left: 4px solid #10b981;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .alert.critical {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+        }
+
+        .alert.high {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid #fbbf24;
+        }
+
+        .alert.medium {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid #3b82f6;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #00d4ff;
+            color: #0f1419;
+        }
+
+        .btn-primary:hover {
+            background: #0891b2;
+        }
+
+        .btn-secondary {
+            background: #2d3748;
+            color: #e6e8eb;
+        }
+
+        .btn-secondary:hover {
+            background: #4a5568;
+        }
+
+        .chart-container {
+            height: 200px;
+            background: #2d3748;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a0aec0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            color: #a0aec0;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <nav class="sidebar">
+            <div class="logo">🤖 RoboMerge</div>
+            <div class="nav-item active" onclick="showSection('overview')">
+                📊 Overview
+            </div>
+            <div class="nav-item" onclick="showSection('operators')">
+                👥 Operators
+            </div>
+            <div class="nav-item" onclick="showSection('queue')">
+                📋 Processing Queue
+            </div>
+            <div class="nav-item" onclick="showSection('quality')">
+                ✅ Data Quality
+            </div>
+            <div class="nav-item" onclick="showSection('alerts')">
+                🚨 Alerts
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div class="header">
+                <h1 id="section-title">Operations Overview</h1>
+                <div class="status-dot" title="System Online"></div>
+            </div>
+
+            <!-- Overview Section -->
+            <div id="overview-section">
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Active Operators</span>
+                        </div>
+                        <div class="metric-value" id="active-operators">12</div>
+                        <div class="metric-label">of 24 total</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Demonstrations Today</span>
+                        </div>
+                        <div class="metric-value" id="demos-today">847</div>
+                        <div class="metric-label">+15% vs yesterday</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Avg Quality Score</span>
+                        </div>
+                        <div class="metric-value" id="avg-quality">0.87</div>
+                        <div class="metric-label">Target: 0.85+</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Success Rate</span>
+                        </div>
+                        <div class="metric-value" id="success-rate">94.2%</div>
+                        <div class="metric-label">Last 24 hours</div>
+                    </div>
+                </div>
+
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Processing Queue</span>
+                        </div>
+                        <div class="metric-value" id="queue-length">23</div>
+                        <div class="metric-label">Est. completion: 2.5 hours</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Active Alerts</span>
+                        </div>
+                        <div class="metric-value" id="active-alerts">3</div>
+                        <div class="metric-label">1 critical, 2 medium</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Operators Section -->
+            <div id="operators-section" class="hidden">
+                <div class="leaderboard">
+                    <div class="leaderboard-header">
+                        Operator Performance Leaderboard
+                    </div>
+                    <div id="leaderboard-content">
+                        <!-- Dynamic content loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Queue Section -->
+            <div id="queue-section" class="hidden">
+                <div class="queue-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Current Queue</span>
+                            <button class="btn btn-secondary" onclick="refreshQueue()">Refresh</button>
+                        </div>
+                        <div id="queue-items">
+                            <!-- Dynamic queue items -->
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Queue Statistics</span>
+                        </div>
+                        <div class="metric-value" id="queue-stats-total">23</div>
+                        <div class="metric-label">Total items</div>
+                        <div style="margin-top: 1rem;">
+                            <div>Queued: <span id="queue-stats-queued">15</span></div>
+                            <div>Processing: <span id="queue-stats-processing">8</span></div>
+                            <div>Avg wait: <span id="queue-stats-wait">12.5 min</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quality Section -->
+            <div id="quality-section" class="hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Data Quality Trends</span>
+                    </div>
+                    <div class="chart-container">
+                        📈 Quality trend chart would be rendered here
+                        <br><small>Integration with charting library (Chart.js, etc.)</small>
+                    </div>
+                </div>
+
+                <div class="cards-grid" style="margin-top: 2rem;">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Quality Distribution</span>
+                        </div>
+                        <div>Excellent (0.9+): <strong>65%</strong></div>
+                        <div>Good (0.8-0.9): <strong>28%</strong></div>
+                        <div>Fair (0.7-0.8): <strong>5%</strong></div>
+                        <div>Poor (<0.7): <strong>2%</strong></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">Failed Demonstrations</span>
+                        </div>
+                        <div class="metric-value">47</div>
+                        <div class="metric-label">Last 24 hours</div>
+                        <button class="btn btn-primary" style="margin-top: 1rem;" onclick="analyzeFailures()">
+                            Analyze Failures
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts Section -->
+            <div id="alerts-section" class="hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Active Alerts</span>
+                    </div>
+                    <div id="alerts-content">
+                        <!-- Dynamic alerts loaded here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Dashboard state management
+        let currentSection = 'overview';
+        let dashboardData = {};
+
+        // Navigation
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('[id$="-section"]').forEach(el => {
+                el.classList.add('hidden');
+            });
+
+            // Show target section
+            document.getElementById(section + '-section').classList.remove('hidden');
+
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update title
+            const titles = {
+                'overview': 'Operations Overview',
+                'operators': 'Operator Performance',
+                'queue': 'Processing Queue',
+                'quality': 'Data Quality Analysis',
+                'alerts': 'System Alerts'
+            };
+            document.getElementById('section-title').textContent = titles[section] || 'Dashboard';
+
+            currentSection = section;
+            loadSectionData(section);
+        }
+
+        // Data loading functions
+        async function loadSectionData(section) {
+            try {
+                switch(section) {
+                    case 'overview':
+                        await loadOverviewData();
+                        break;
+                    case 'operators':
+                        await loadOperatorData();
+                        break;
+                    case 'queue':
+                        await loadQueueData();
+                        break;
+                    case 'quality':
+                        await loadQualityData();
+                        break;
+                    case 'alerts':
+                        await loadAlertsData();
+                        break;
+                }
+            } catch (error) {
+                console.error(`Error loading ${section} data:`, error);
+            }
+        }
+
+        async function loadOverviewData() {
+            // Simulate API call
+            const data = await simulateApiCall('/api/dashboard/overview');
+            updateOverviewMetrics(data);
+        }
+
+        async function loadOperatorData() {
+            const data = await simulateApiCall('/api/operators/leaderboard');
+            updateLeaderboard(data);
+        }
+
+        async function loadQueueData() {
+            const data = await simulateApiCall('/api/queue/status');
+            updateQueueDisplay(data);
+        }
+
+        async function loadQualityData() {
+            const data = await simulateApiCall('/api/quality/trends');
+            updateQualityDisplay(data);
+        }
+
+        async function loadAlertsData() {
+            const data = await simulateApiCall('/api/alerts/active');
+            updateAlertsDisplay(data);
+        }
+
+        // Update functions
+        function updateOverviewMetrics(data) {
+            document.getElementById('active-operators').textContent = data.active_operators || '12';
+            document.getElementById('demos-today').textContent = data.demos_today || '847';
+            document.getElementById('avg-quality').textContent = (data.avg_quality || 0.87).toFixed(2);
+            document.getElementById('success-rate').textContent = ((data.success_rate || 0.942) * 100).toFixed(1) + '%';
+            document.getElementById('queue-length').textContent = data.queue_length || '23';
+            document.getElementById('active-alerts').textContent = data.active_alerts || '3';
+        }
+
+        function updateLeaderboard(data) {
+            const content = document.getElementById('leaderboard-content');
+            if (!data || data.length === 0) {
+                content.innerHTML = '<div class="loading">Loading operator data...</div>';
+                return;
+            }
+
+            content.innerHTML = data.map(op => `
+                <div class="leaderboard-item">
+                    <div class="rank">#${op.rank}</div>
+                    <div class="operator-name">${op.name}</div>
+                    <div class="score">${op.performance_score}</div>
+                    <div>${op.success_rate}%</div>
+                    <div class="status-badge ${getStatusClass(op.last_active)}">
+                        ${getStatusText(op.last_active)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateQueueDisplay(data) {
+            const items = document.getElementById('queue-items');
+            const stats = data.items || [];
+            
+            if (stats.length === 0) {
+                items.innerHTML = '<div class="loading">No items in queue</div>';
+            } else {
+                items.innerHTML = stats.map(item => `
+                    <div class="queue-item priority-${item.priority}">
+                        <div>
+                            <strong>${item.task_type}</strong><br>
+                            <small>Operator: ${item.operator_id}</small>
+                        </div>
+                        <div>
+                            <span class="status-badge status-${item.status}">${item.status}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Update queue statistics
+            document.getElementById('queue-stats-total').textContent = data.total || '0';
+            document.getElementById('queue-stats-queued').textContent = data.queued || '0';
+            document.getElementById('queue-stats-processing').textContent = data.processing || '0';
+            document.getElementById('queue-stats-wait').textContent = (data.avg_wait || 0).toFixed(1) + ' min';
+        }
+
+        function updateAlertsDisplay(data) {
+            const content = document.getElementById('alerts-content');
+            if (!data || data.length === 0) {
+                content.innerHTML = '<div class="loading">No active alerts</div>';
+                return;
+            }
+
+            content.innerHTML = data.map(alert => `
+                <div class="alert ${alert.severity}">
+                    <div>
+                        <strong>${alert.message}</strong><br>
+                        <small>${formatTimestamp(alert.timestamp)}</small>
+                    </div>
+                    <button class="btn btn-secondary" onclick="resolveAlert('${alert.alert_id}')">
+                        Resolve
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Utility functions
+        function getStatusClass(lastActive) {
+            const now = new Date();
+            const lastActiveDate = new Date(lastActive);
+            const diffHours = (now - lastActiveDate) / (1000 * 60 * 60);
+            
+            if (diffHours < 0.5) return 'status-active';
+            if (diffHours < 2) return 'status-idle';
+            return 'status-offline';
+        }
+
+        function getStatusText(lastActive) {
+            const now = new Date();
+            const lastActiveDate = new Date(lastActive);
+            const diffHours = (now - lastActiveDate) / (1000 * 60 * 60);
+            
+            if (diffHours < 0.5) return 'Active';
+            if (diffHours < 2) return 'Idle';
+            return 'Offline';
+        }
+
+        function formatTimestamp(timestamp) {
+            return new Date(timestamp).toLocaleString();
+        }
+
+        // API simulation (replace with real API calls)
+        async function simulateApiCall(endpoint) {
+            await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+            
+            const mockData = {
+                '/api/dashboard/overview': {
+                    active_operators: 12,
+                    demos_today: 847,
+                    avg_quality: 0.87,
+                    success_rate: 0.942,
+                    queue_length: 23,
+                    active_alerts: 3
+                },
+                '/api/operators/leaderboard': [
+                    { rank: 1, name: 'Sarah Chen', performance_score: 92.5, success_rate: 96.8, last_active: new Date().toISOString() },
+                    { rank: 2, name: 'Marcus Rodriguez', performance_score: 89.2, success_rate: 94.1, last_active: new Date(Date.now() - 30*60*1000).toISOString() },
+                    { rank: 3, name: 'Priya Patel', performance_score: 87.9, success_rate: 92.7, last_active: new Date().toISOString() },
+                ],
+                '/api/queue/status': {
+                    total: 23,
+                    queued: 15,
+                    processing: 8,
+                    avg_wait: 12.5,
+                    items: [
+                        { task_type: 'Pick & Place', operator_id: 'OP_001', status: 'queued', priority: 'high' },
+                        { task_type: 'Folding', operator_id: 'OP_003', status: 'processing', priority: 'medium' },
+                        { task_type: 'Cleaning', operator_id: 'OP_007', status: 'queued', priority: 'low' },
+                    ]
+                },
+                '/api/alerts/active': [
+                    { alert_id: 'A001', severity: 'critical', message: 'Low data quality from Operator OP_005', timestamp: new Date().toISOString() },
+                    { alert_id: 'A002', severity: 'medium', message: 'Queue bottleneck detected', timestamp: new Date(Date.now() - 15*60*1000).toISOString() },
+                ]
+            };
+            
+            return mockData[endpoint] || {};
+        }
+
+        // Action functions
+        function refreshQueue() {
+            loadQueueData();
+        }
+
+        function resolveAlert(alertId) {
+            // API call to resolve alert
+            console.log('Resolving alert:', alertId);
+            loadAlertsData(); // Refresh alerts
+        }
+
+        function analyzeFailures() {
+            alert('Failure analysis feature would open detailed breakdown of failed demonstrations');
+        }
+
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            loadSectionData(currentSection);
+        }, 30000);
+
+        // Initial load
+        loadSectionData('overview');
+    </script>
+</body>
+</html>
