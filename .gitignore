@@ -13,3 +13,22 @@ __pycache__/
 
 # Jupyter
 .ipynb_checkpoints
+
+# Dashboard logs and temp files
+dashboard_logs/
+*.log
+
+# Virtual environments (if using)
+venv/
+env/
+.venv/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db

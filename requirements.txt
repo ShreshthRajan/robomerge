@@ -7,3 +7,6 @@ jupyter>=1.1.1
 tensorflow-io-gcs-filesystem>=0.37.1
 tensorflow-metal>=1.2.0   # For Mac M1/M2 users
 ipykernel>=6.29.5
+Flask>=2.3.0
+requests>=2.31.0
+python-dateutil>=2.8.2
