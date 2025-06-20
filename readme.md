@@ -1,17 +1,17 @@
 # 🤖 RoboMerge: Enhanced Robot Data Pipeline
 
-A comprehensive preprocessing pipeline implementing Physical Intelligence's latest methodologies for robot learning and deployment.
+The first comprehensive VLA preprocessing pipeline based on PI's latest work on robot learning and deployment (as of 06/19/25). 
 
-## ✨ Features
+## Features
 
-- **🔥 FAST Tokenization**: Efficient action representation with DCT compression
-- **🧠 Knowledge Insulation (KI)**: π₀.₅ + KI training with gradient isolation
-- **⚡ Real-Time Chunking (RTC)**: Low-latency deployment with inpainting
-- **📊 Operations Dashboard**: Enterprise-scale monitoring for 100+ operators
-- **✅ Quality Validation**: Comprehensive data quality metrics and alerting
-- **🔄 Multi-Robot Support**: Standardized pipeline for different robot types
+- ** FAST Tokenization**: Efficient action representation with DCT compression
+- ** Knowledge Insulation (KI)**: π₀.₅ + KI training with gradient isolation
+- ** Real-Time Chunking (RTC)**: Low-latency deployment with inpainting
+- ** Operations Dashboard**: Enterprise-scale monitoring for 100+ operators
+- ** Quality Validation**: Comprehensive data quality metrics and alerting
+- ** Multi-Robot Support**: Standardized pipeline for different robot types
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Installation
 
@@ -42,13 +42,13 @@ python demo_live_dashboard.py
 ```
 
 This will:
-1. ✅ Initialize RoboMerge with all features (KI + RTC + Dashboard)
-2. ✅ Create synthetic demonstration data
-3. ✅ Test FAST, KI, and RTC processing methods
-4. ✅ Simulate 100+ operator activity
-5. ✅ Launch live dashboard at `http://localhost:8001`
+1. Initialize RoboMerge with all features (KI + RTC + Dashboard)
+2. Create synthetic demonstration data
+3. Test FAST, KI, and RTC processing methods
+4. Simulate 100+ operator activity
+5. Launch live dashboard at `http://localhost:8001`
 
-## 📋 What the Demo Shows
+## What the Demo Shows
 
 ### Core Processing Methods
 
@@ -83,7 +83,7 @@ This will:
 - Quality distribution analysis
 - Queue bottleneck detection
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
@@ -103,7 +103,7 @@ This will:
                        └──────────────────┘
 ```
 
-## 🧪 Advanced Usage
+## Advanced Usage
 
 ### Processing Robot Data
 
@@ -165,10 +165,10 @@ pipeline.dashboard.update_operator_metrics("OP_001", result)
 - **RTC**: ~4-5 seconds per episode
 
 ### Scalability
-- ✅ 100+ concurrent operators
-- ✅ Real-time dashboard updates
-- ✅ Queue processing with priority
-- ✅ Alert system with severity levels
+- 100+ concurrent operators
+- Real-time dashboard updates
+- Queue processing with priority
+- Alert system with severity levels
 
 ### Quality Metrics
 - Data completeness: 99%+
@@ -176,14 +176,14 @@ pipeline.dashboard.update_operator_metrics("OP_001", result)
 - Action smoothness validation
 - Automated quality alerting
 
-## 🎯 Business Value
+## Usability
 
-**For Physical Intelligence**
-- ✅ Replaces spreadsheet-based operator monitoring
-- ✅ Enables 100+ operator coordination
-- ✅ Bridges operations → research complexity
-- ✅ Supports latest PI research immediately
-- ✅ Production-ready for autonomous deployment
+**For PI
+- Replaces spreadsheet-based operator monitoring
+- Enables 100+ operator coordination
+- Bridges operations → research complexity
+- Supports latest research on VLA immediately
+- Production-ready for autonomous deployment
 
 **Key Capabilities**
 - Real-time operator performance tracking
@@ -223,16 +223,12 @@ rtc_config = {
 }
 ```
 
-## 🤝 Contributing
+## Contributing
 
 This project implements Physical Intelligence's research methodologies:
 - [π₀.₅ + Knowledge Insulation](https://physicalintelligence.company/research/knowledge_insulation)
 - [Real-Time Action Chunking](https://physicalintelligence.company/research/real_time_chunking)
+- [π0.5] (https://www.physicalintelligence.company/blog/pi05)
+- [FAST] (https://www.physicalintelligence.company/research/fast)
 
-## 📄 License
 
-This project is designed for research and development purposes, implementing published methodologies from Physical Intelligence.
-
----
-
-**Ready for Physical Intelligence deployment! 🚀**
