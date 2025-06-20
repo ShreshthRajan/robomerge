@@ -1,15 +1,15 @@
-# 🤖 RoboMerge: Enhanced Robot Data Pipeline
+# RoboMerge: Enhanced Robot Data Pipeline
 
 The first comprehensive VLA preprocessing pipeline based on PI's latest work on robot learning and deployment (as of 06/19/25). 
 
 ## Features
 
-- ** FAST Tokenization**: Efficient action representation with DCT compression
-- ** Knowledge Insulation (KI)**: π₀.₅ + KI training with gradient isolation
-- ** Real-Time Chunking (RTC)**: Low-latency deployment with inpainting
-- ** Operations Dashboard**: Enterprise-scale monitoring for 100+ operators
-- ** Quality Validation**: Comprehensive data quality metrics and alerting
-- ** Multi-Robot Support**: Standardized pipeline for different robot types
+- FAST Tokenization: Efficient action representation with DCT compression
+- Knowledge Insulation (KI): π₀.₅ + KI training with gradient isolation
+- Real-Time Chunking (RTC): Low-latency deployment with inpainting
+- Operations Dashboard: Enterprise-scale monitoring for 100+ operators
+- Quality Validation: Comprehensive data quality metrics and alerting
+- Multi-Robot Support: Standardized pipeline for different robot types
 
 ##  Quick Start
 
