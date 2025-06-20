@@ -17,7 +17,7 @@ The first comprehensive VLA preprocessing pipeline based on PI's latest work on 
 
 ```bash
 # Clone repository
-git clone <repository-url>
+git clone https://github.com/ShreshthRajan/robomerge/
 cd robomerge
 
 # Install dependencies
