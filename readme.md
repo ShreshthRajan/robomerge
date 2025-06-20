@@ -1,4 +1,4 @@
-# RoboMerge: Enhanced Robot Data Pipeline
+# RoboMerge: Robot Data Pipeline
 
 The first comprehensive VLA preprocessing pipeline based on PI's latest work on robot learning and deployment (as of 06/19/25). 
 
