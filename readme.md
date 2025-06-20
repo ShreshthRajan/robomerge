@@ -157,7 +157,7 @@ pipeline.dashboard.update_operator_metrics("OP_001", result)
 # POST /api/refresh - Trigger data refresh
 ```
 
-## 📊 Performance
+## Performance
 
 ### Processing Speed
 - **FAST**: ~2-3 seconds per episode
